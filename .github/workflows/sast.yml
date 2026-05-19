@@ -1,0 +1,43 @@
+name: Secure CI/CD Production Pipeline
+
+on:
+  push:
+    branches: [ "develop" ]  # CHANGED: Now watches your active work branch
+  pull_request:
+    branches: [ "develop" ]  # CHANGED: Tracks pull requests into develop
+
+jobs:
+  sast_scan:
+    name: 1. Vulnerability Assessment (SAST)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run SonarQube Scan Engine
+        uses: SonarSource/sonarqube-scan-action@v3
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      - name: Enforce Custom Quality Gate Status
+        uses: SonarSource/sonarqube-quality-gate-action@v2
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+  deploy_production:
+    name: 2. Production Environment Deployment
+    runs-on: ubuntu-latest
+    needs: sast_scan
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Simulate Cloud App Deployment
+        run: |
+          echo "Security Gates Cleared Successfully!"
+          echo "Deploying production artifacts securely to the cloud host target..."
