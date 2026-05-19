@@ -42,19 +42,12 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
-      - name: Snyk - Scan Backend Dependencies
+      - name: Snyk - Scan Project Dependencies
         uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --severity-threshold=high --file=backend/package.json
-
-      - name: Snyk - Scan Frontend Dependencies
-        uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --severity-threshold=high --file=frontend/package.json
+          args: --severity-threshold=high --file=package.json
 
   container_scan:
     name: 3. Container Image Security Scan
@@ -66,7 +59,7 @@ jobs:
 
       - name: Build Staging Docker Image
         run: |
-          docker build -t taskapp-backend:staging ./backend
+          docker build -t taskapp-backend:staging .
 
       - name: Run Trivy Security Vulnerability Scanner
         uses: aquasecurity/trivy-action@master
