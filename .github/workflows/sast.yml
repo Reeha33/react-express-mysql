@@ -21,9 +21,14 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.projectKey=TaskApp-DevSecOps
+            -Dsonar.projectName=TaskApp
+            -Dsonar.sources=.
 
       - name: Enforce Custom Quality Gate Status
-        uses: SonarSource/sonarqube-quality-gate-action@v1.1.0  # FIXED: Working semantic version release tag
+        uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
         timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
