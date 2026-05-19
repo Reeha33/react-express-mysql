@@ -2,9 +2,9 @@ name: Secure CI/CD Production Pipeline
 
 on:
   push:
-    branches: [ "develop" ]  # CHANGED: Now watches your active work branch
+    branches: [ "develop" ]
   pull_request:
-    branches: [ "develop" ]  # CHANGED: Tracks pull requests into develop
+    branches: [ "develop" ]
 
 jobs:
   sast_scan:
@@ -29,15 +29,39 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-  deploy_production:
-    name: 2. Production Environment Deployment
+  sca_scan:
+    name: 2. Open-Source Dependency Scan (SCA)
     runs-on: ubuntu-latest
-    needs: sast_scan
+    needs: sast_scan  # Blocks SCA until SAST clears successfully
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Snyk - Scan Backend Dependencies
+        uses: snyk/actions/node@master
+        continue-on-error: false  # Hard-fails the pipeline if high CVEs are found
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high --file=backend/package.json
+
+      - name: Snyk - Scan Frontend Dependencies
+        uses: snyk/actions/node@master
+        continue-on-error: false  # Hard-fails the pipeline if high CVEs are found
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high --file=frontend/package.json
+
+  deploy_production:
+    name: 3. Production Environment Deployment
+    runs-on: ubuntu-latest
+    needs: sca_scan  # CRITICAL: Blocks deployment unless BOTH SAST and SCA pass!
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
       - name: Simulate Cloud App Deployment
         run: |
-          echo "Security Gates Cleared Successfully!"
+          echo "All Security Gates (SAST & SCA) Cleared Successfully!"
           echo "Deploying production artifacts securely to the cloud host target..."
