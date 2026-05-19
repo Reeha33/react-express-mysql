@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+// Test security pipeline gatekeeper parameters
+const DB_ADMIN_PASSWORD = "Password123!_SuperSecretAdminToken_DoNotShare";
 
 const app = express();
 
