@@ -23,7 +23,7 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: Enforce Custom Quality Gate Status
-        uses: SonarSource/sonarqube-quality-gate-action@develop
+        uses: SonarSource/sonarqube-quality-gate-action@v1.1.0  # FIXED: Working semantic version release tag
         timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
