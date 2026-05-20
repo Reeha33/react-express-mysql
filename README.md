@@ -21,18 +21,18 @@ Automation Engines: Terraform Cloud Engine, Azure DevOps Pipelines
 
 Security Shield Frameworks: SonarQube Engine, Snyk Dependency Index, OWASP ZAP Web Scanner
 **3.Repository Structural Overview**
-├── .github/                  # Local actions and platform workflow setups
-├── node-express-server/       # Secure REST API engine
-│   ├── Dockerfile             # Multi-stage production container configuration
-│   └── server.js              # Entrypoint server execution script
-├── react-client/              # Front-end dashboard user interface
-│   ├── Dockerfile             # Multi-stage user interface web asset compilation
-│   └── azure-pipelines.yml    # Modular core orchestration pipeline script
-├── terraform/                 # Declarative Infrastructure-as-Code modules
-│   ├── main.tf                # Core provider declarations and resource templates
-│   ├── variables.tf           # Parametrization hooks and target variables
-│   └── outputs.tf             # Explicit runtime platform metadata exports
-└── README.md                  # System operation and implementation manual
+├── .github/                  
+├── node-express-server/       
+│   ├── Dockerfile             
+│   └── server.js             
+├── react-client/              
+│   ├── Dockerfile            
+│   └── azure-pipelines.yml    
+├── terraform/                 
+│   ├── main.tf                
+│   ├── variables.tf           
+│   └── outputs.tf            
+└── README.md                  
 **4.Deployment and Setup Runbook**
 **Part 1: Initializing Platform Workspace Foundations**
 1. Source Control Branch Management
@@ -45,17 +45,17 @@ develop: Integration workspace for feature updates.
 feature/*: Short-lived branches dedicated to active development tasks.
 **2. Local Infrastructure Ingestion via Terraform**
 Deploy your core platform assets automatically using a declarative, state-locked approach. Run these commands inside the terraform/ directory
-# Prepare work directories, update backends, and synchronize provider hooks
 terraform init
 
-# Analyze code scripts to evaluate upcoming configuration additions
 terraform plan -out=tfplan
 
-# Execute building instructions directly inside your cloud subscription
 terraform apply "tfplan"
+
 **Part 2: CI/CD Pipeline Orchestration Layout**
 The automation layer is driven by a multi-stage azure-pipelines.yml workflow configuration. It processes compilation assets sequentially and applies code validation checks before promotion:
+
 [Source Commit] ──> [Build & Validate] ──> [SAST Code Audit] ──> [SCA Dependency Check] ──> [ACR Container Push] ──> [DAST Web Analysis] ──> [Production Deploy]
+
 **1. Multi-Stage Pipeline Execution Gates**
 Stage A: Build & Package Validation: Compiles full-stack assets within isolated build workers to verify code syntax and integrity.
 Stage B: Code Quality Assessment (SAST): Intercepts compilation streams to enforce architectural quality gates, running static analysis inside a custom cloud container instance.
@@ -63,7 +63,9 @@ Stage C: Dependency Remediation (SCA): Scans structural lockfiles against a vuln
 Stage D: Registry Promotion: Packages application components using multi-stage Dockerfiles and pushes versioned snapshots into the Azure Container Registry.
 Stage E: Runtime Application Security Testing (DAST): Performs black-box security scanning against target endpoints to audit exposed interface parameters.
 Stage F: Automated Release Deployment: Deploys verified software packages directly to Azure Static Web Apps and Azure App Services.
+
 **Enterprise Security Compliance Verification**
+
 Every pipeline run logs execution state telemetry to verify that code meets security policy requirements before moving to staging environments:
 SonarQube Quality Gate Status: Passed builds require zero newly introduced code smells, structural flaws, or security vulnerabilities (New Issues = 0).
 Snyk Dependency Status: Pipeline checks block deployment if vulnerable dependencies or license violations are found within source package definitions.
